@@ -1,5 +1,5 @@
 use burn::{
-    backend::{Autodiff, Wgpu},
+    backend::{Autodiff, NdArray, Wgpu},
     optim::AdamConfig,
 };
 use mion::{
@@ -8,10 +8,12 @@ use mion::{
 };
 
 fn main() {
-    type MyBackend = Wgpu<f32, i32>;
+    // type MyBackend = Wgpu<f32, i32>;
+    type MyBackend = NdArray<f32, i32>;
     type MyAutodiffBackend = Autodiff<MyBackend>;
 
-    let device = burn::backend::wgpu::WgpuDevice::default();
+    // let device = burn::backend::wgpu::WgpuDevice::default();
+    let device = burn::backend::ndarray::NdArrayDevice::default();
     let artifact_dir = "/tmp/guide";
     train::<MyAutodiffBackend>(
         artifact_dir,

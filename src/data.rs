@@ -27,8 +27,8 @@ impl<B: Backend> Batcher<B, ImageItem, MnistBatch<B>> for MnistBatcher {
         let images = samples
             .iter()
             .map(|item| TensorData::from(item.image).convert::<B::FloatElem>())
-            .map(|data| Tensor::<B, 2>::from_data(data, device))
-            .map(|tensor| tensor.reshape([1, IMG_WIDTH, IMG_HEIGHT]) / 255.0)
+            .map(|data| Tensor::<B, 1>::from_data(data, device))
+            .map(|tensor| tensor.reshape([1, IMG_WIDTH, IMG_HEIGHT]))
             .collect();
         let targets = Tensor::cat(targets, 0);
         let images = Tensor::cat(images, 0);
@@ -81,12 +81,9 @@ impl ImageData {
                 continue;
             }
             let image = image::open(path)?;
-            let (width, height) = image.dimensions();
-            assert_eq!(width as usize, IMG_WIDTH);
-            assert_eq!(height as usize, IMG_HEIGHT);
             let image = image.into_luma8().into_raw();
             let label = name
-                .splitn(1, "_")
+                .split("_")
                 .next()
                 .and_then(|s| s.parse::<i32>().ok())
                 .unwrap();
